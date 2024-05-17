@@ -1,0 +1,46 @@
+.dropzone{
+    height: 'fit-content';
+    width:100%;
+    text-align: center;
+    overflow: hidden;
+}
+
+
+.dropzone.active .inner{
+    border-color: blue;
+}
+
+.dropzone #preview{
+    width: 100%;
+}
+
+.dropzone .inner{
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 5px dashed lightgray;
+    height: 100%;
+}
+
+.dropzone .inner a{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: blue;
+    text-align: center;
+}
+
+.dropzone .inner a:hover{
+    text-decoration: none;
+}
+
+.dropzone .inner input[type="file"]{
+    display: none;
+}
+
+.dropzone .btn{
+    margin-bottom: 0;
+    margin-top: 5px;
+}

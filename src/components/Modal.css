@@ -1,0 +1,219 @@
+.overlay{
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(34, 0, 48, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    justify-content: center;
+    transition: opacity .25s;
+}
+
+.modal.default{
+    transform: scale(0);
+    animation: blowUpModalTwo .3s cubic-bezier(0.165, 0.840, 0.440, 1.000) forwards;
+}
+
+.modal.open{
+    transform:scale(1);
+    animation: blowUpModal .3s cubic-bezier(0.165, 0.840, 0.440, 1.000) forwards;
+}
+
+.modal.close{
+    transform: scale(0);
+    animation: blowUpModalTwo .3s cubic-bezier(0.165, 0.840, 0.440, 1.000) forwards;
+}
+
+
+
+.modal.fullscreen{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: 30px;
+    color: var(--black);
+}
+
+.modal.fullscreen .modal-header{
+    margin-bottom: 30px;
+}
+
+.modal.fullscreen .modal-header .icon{
+    font-size: 3rem!important;
+}
+
+.modal.fullscreen .modal-body{
+    margin-top: 50px;
+    max-width: 800px;
+}
+
+.modal.fullscreen .modal-body .result-list{
+    margin-top: 30px;
+}
+
+.modal.fullscreen .modal-footer{
+    display: none;
+}
+
+.modal-header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.modal-header h1{
+    line-height: 1;
+    margin-bottom: 0;
+}
+
+.modal-header .icon{
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.modal-body{
+    min-height: 400px;
+}
+
+.modal-input-container > .spread{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal-input-container .icon{
+    font-size: 2.5rem;
+    margin-left: 8px;
+    /* display: flex;
+    align-items: center; */
+    cursor: pointer;
+}
+
+.modal.default{
+    border-radius: 0;
+    background-color: white;
+    max-width: 800px;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+@media screen and (min-width: 1200px) {
+    .modal.default{
+        max-width: 800px;
+    }
+}
+
+@media screen and (min-width: 1400px) {
+    .modal.default{
+        max-width: 1000px;
+    }
+}
+
+.modal.default .modal-header{
+    padding: 20px;
+    border-bottom: 1px solid var(--light-grey);
+}
+
+.modal.default .modal-header h1{
+    font-size: 1.5rem;
+    margin-bottom: 0;
+}
+
+.modal.default .modal-footer{
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--light-grey);
+    font-size: 0.6rem;
+    background-color: var(--black);
+    color: white;
+}
+
+
+
+.modal.default .modal-header .icon{
+    font-size: 1.5rem!important;
+}
+
+.modal.default#ticket-order .modal-body{
+    display: flex;
+    flex-direction: row;
+}
+
+.modal.default .modal-body main{
+    flex:3;
+    padding: 15px;
+    margin-bottom: 30px;    
+}
+
+.modal.default .modal-body main .item{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.modal.default .modal-body aside{
+    flex: 2;
+    background-color: var(--bg-color);
+    padding-bottom: 10px;
+}
+
+.modal.default .modal-body aside img{
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.modal.default .modal-body aside .info{
+    padding: 0 15px;
+}
+
+.modal.default .modal-body aside .item{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.modal.default .modal-body aside .item.total{
+    font-weight: 600;
+    font-size: 1.1em;
+    margin-bottom: 20px;
+}
+
+.modal.default .modal-body aside hr{
+    margin: 20px 0;
+    height: 1px;
+    background-color: var(--light-grey);
+}
+
+@keyframes blowUpModal {
+    0% {
+      transform:scale(0);
+    }
+    100% {
+      transform:scale(1);
+    }
+  }
+  
+  @keyframes blowUpModalTwo {
+    0% {
+      transform:scale(1);
+      opacity:1;
+    }
+    100% {
+      transform:scale(0);
+      opacity:0;
+    }
+  }
