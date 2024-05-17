@@ -1,8 +1,7 @@
 import { createPortal } from 'react-dom';
 import './Modal.css'
-import { useEffect, useLayoutEffect, useState } from 'react';
 import {IoClose} from 'react-icons/io5'
-
+import {useEffect} from "react";
 
 function ModalContent({header, type, children, onClickClose, id, overlayStyle, footerContent}){
     
