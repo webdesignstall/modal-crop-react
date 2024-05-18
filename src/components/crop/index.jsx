@@ -1,123 +1,95 @@
-import getCroppedImg from "@/utils/cropImage";
-import React, { useState, useCallback } from "react";
-import Cropper from "react-easy-crop";
-import { FaPlus, FaMinus, FaRotateLeft, FaRotateRight } from "react-icons/fa6";
+import { Button, Space } from "antd";
+import { useEffect, useState } from "react";
+import ReactCrop, { centerCrop, makeAspectCrop } from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
+import { getCroppedImg } from "../../utils/cropImage";
 
-const CropContainer = ({ file, croppedImage, setCroppedImage }) => {
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [rotation, setRotation] = useState(0);
-  const [image, setImage] = useState(null);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+const ASPECT_RATIO = 1;
+const MIN_DIMENSION = 100;
 
-  if (file && !image) {
+const ImageCropper = ({ file, setError, setImageFile }) => {
+  const [imageSrc, setImageSrc] = useState("");
+  const [crop, setCrop] = useState(null);
+  const [croppedImageUrl, setCroppedImageUrl] = useState("");
+
+  useEffect(() => {
     const reader = new FileReader();
-    reader.readAsDataURL(file[0]);
-    reader.onload = () => {
-      setImage(reader.result);
-    };
-  }
+    reader.addEventListener("load", () => {
+      const imageUrl = reader?.result?.toString() || "";
+      setImageSrc(imageUrl);
+    });
+    reader.readAsDataURL(file);
+  }, [file]);
 
-  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
-    setCroppedAreaPixels(croppedAreaPixels);
-  }, []);
+  const onImageLoad = (e) => {
+    const { width, height, naturalWidth, naturalHeight } = e.currentTarget;
 
-  const handleZoomChange = (zoomValue) => {
-    setZoom(zoomValue);
-  };
-
-  const handleRotationChange = (rotationValue) => {
-    setRotation(rotationValue);
-  };
-
-  const saveCroppedImage = useCallback(async () => {
-    try {
-      const croppedImg = await getCroppedImg(
-        image,
-        croppedAreaPixels,
-        rotation
-      );
-      setCroppedImage(croppedImg);
-    } catch (e) {
-      console.error(e);
+    if (naturalWidth < MIN_DIMENSION || naturalHeight < MIN_DIMENSION) {
+      setError("Image must be at least 100 x 100 pixels");
+      setImageSrc("");
+      return;
     }
-  }, [image, croppedAreaPixels, rotation]);
+
+    const getCropWidthInPercent = (MIN_DIMENSION / width) * 100;
+
+    const crop = makeAspectCrop(
+      {
+        unit: "%",
+        width: getCropWidthInPercent,
+      },
+      ASPECT_RATIO,
+      width,
+      height
+    );
+    const centeredCrop = centerCrop(crop, width, height);
+    setCrop(centeredCrop);
+  };
+
+  const saveCroppedImage = async () => {
+    const image = document.querySelector("img[alt='crop']");
+    if (!image || !crop) {
+      return;
+    }
+    const croppedImageUrl = await getCroppedImg(image, crop);
+    setCroppedImageUrl(croppedImageUrl);
+  };
 
   return (
     <div>
-      <div className="h-[60vh] w-[60vw] border rounded-[4px] mt-[22px] flex flex-col justify-center items-center bg-blue-50 hover:bg-blue-100 relative">
-        {image && (
-          <Cropper
-            image={image}
+      {imageSrc && (
+        <div>
+          <ReactCrop
             crop={crop}
-            zoom={zoom}
-            rotation={rotation}
-            aspect={4 / 4}
-            onCropChange={setCrop}
-            onCropComplete={onCropComplete}
-            onZoomChange={setZoom}
-            onRotationChange={setRotation}
-            cropShape="round"
-            style={{ containerStyle: { width: "100%", height: "100%" } }}
-          />
-        )}
-      </div>
-      <div className="flex items-center gap-5 my-3">
-        <button
-          onClick={() => handleZoomChange(Math.max(zoom - 0.1, 1))}
-          className="bg-green-500 p-4 rounded-full cursor-pointer"
-        >
-          <FaMinus className="text-white  text-3xl " />
-        </button>
-        <input
-          type="range"
-          className="w-full"
-          min={1}
-          max={10}
-          step={0.1}
-          value={zoom}
-          onChange={(e) => handleZoomChange(e.target.value)}
-        />
-        <button
-          onClick={() => handleZoomChange(Math.min(zoom + 0.1, 10))}
-          className="bg-green-500 p-4 rounded-full cursor-pointer"
-        >
-          <FaPlus className="text-white  text-3xl " />
-        </button>
-      </div>
-      <div className="flex items-center gap-5 my-3">
-        <button
-          onClick={() => handleRotationChange((rotation - 10 + 360) % 360)}
-          className="bg-purple-800 p-4 rounded-full cursor-pointer"
-        >
-          <FaRotateLeft className="text-white  text-3xl " />
-        </button>
-        <input
-          type="range"
-          className="w-full mt-[8px]"
-          min={0}
-          max={360}
-          step={1}
-          value={rotation}
-          onChange={(e) => handleRotationChange(e.target.value)}
-        />
-        <button
-          onClick={() => handleRotationChange((rotation + 10) % 360)}
-          className="bg-purple-800 p-4 rounded-full cursor-pointer"
-        >
-          <FaRotateRight className="text-white  text-3xl " />
-        </button>
-      </div>
-      <div className="flex justify-end my-3">
-        <button
-          className="bg-blue-600 w-full rounded-lg text-center  py-3 text-white "
-          onClick={saveCroppedImage}
-        >
-          Crop Image
-        </button>
-      </div>
+            onChange={(newCrop) => setCrop(newCrop)}
+            keepSelection
+            aspect={ASPECT_RATIO}
+            minWidth={MIN_DIMENSION}
+          >
+            <img src={imageSrc} onLoad={onImageLoad} alt="crop" />
+          </ReactCrop>
+
+          <Space>
+            <Button
+              onClick={() => setImageFile(null)}
+              className="bg-red-600 text-white"
+              type="default"
+            >
+              Cancel
+            </Button>
+            <Button onClick={saveCroppedImage} type="primary">
+              Crop Image
+            </Button>
+          </Space>
+        </div>
+      )}
+      {croppedImageUrl && (
+        <div className="border-2 p-5 rounded-md bg-slate-400 mt-5">
+          <h3 className="text-2xl font-semibold">Cropped Image Preview:</h3>
+          <img src={croppedImageUrl} alt="Cropped" />
+        </div>
+      )}
     </div>
   );
 };
 
-export default CropContainer;
+export default ImageCropper;
