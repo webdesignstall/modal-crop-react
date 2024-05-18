@@ -1,16 +1,12 @@
-import { Button, Space } from "antd";
 import { useEffect, useState } from "react";
 import ReactCrop, { centerCrop, makeAspectCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
-import { getCroppedImg } from "../../utils/cropImage";
 
 const ASPECT_RATIO = 1;
 const MIN_DIMENSION = 100;
 
-const ImageCropper = ({ file, setError, setImageFile }) => {
+const ImageCropper = ({ file, setError, crop, setCrop }) => {
   const [imageSrc, setImageSrc] = useState("");
-  const [crop, setCrop] = useState(null);
-  const [croppedImageUrl, setCroppedImageUrl] = useState("");
 
   useEffect(() => {
     const reader = new FileReader();
@@ -45,15 +41,6 @@ const ImageCropper = ({ file, setError, setImageFile }) => {
     setCrop(centeredCrop);
   };
 
-  const saveCroppedImage = async () => {
-    const image = document.querySelector("img[alt='crop']");
-    if (!image || !crop) {
-      return;
-    }
-    const croppedImageUrl = await getCroppedImg(image, crop);
-    setCroppedImageUrl(croppedImageUrl);
-  };
-
   return (
     <div>
       {imageSrc && (
@@ -67,25 +54,6 @@ const ImageCropper = ({ file, setError, setImageFile }) => {
           >
             <img src={imageSrc} onLoad={onImageLoad} alt="crop" />
           </ReactCrop>
-
-          <Space>
-            <Button
-              onClick={() => setImageFile(null)}
-              className="bg-red-600 text-white"
-              type="default"
-            >
-              Cancel
-            </Button>
-            <Button onClick={saveCroppedImage} type="primary">
-              Crop Image
-            </Button>
-          </Space>
-        </div>
-      )}
-      {croppedImageUrl && (
-        <div className="border-2 p-5 rounded-md bg-slate-400 mt-5">
-          <h3 className="text-2xl font-semibold">Cropped Image Preview:</h3>
-          <img src={croppedImageUrl} alt="Cropped" />
         </div>
       )}
     </div>

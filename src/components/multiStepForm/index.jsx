@@ -8,7 +8,7 @@ import ImageInfo from "../steps/ImageInfo";
 
 const MultiStepForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [goTo, setGoTo] = useState(0);
+  const [goTo, setGoTo] = useState("next");
 
   const steps = [
     { title: "Product", content: <ProductInfo goTo={goTo} /> },
