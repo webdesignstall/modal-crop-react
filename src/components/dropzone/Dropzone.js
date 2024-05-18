@@ -3,6 +3,9 @@ import { IoPersonAddOutline } from "react-icons/io5";
 import { forwardRef, useState } from "react";
 import { Link } from "react-router-dom";
 import ImageCropper from "../crop";
+import { Modal } from "antd";
+import { getCroppedImg } from "../../utils/cropImage";
+import { createNewImageFile } from "../../utils/createNewImage";
 
 const DropZone = forwardRef(function DropZoneFunction(
   { previewMaxWidth, onChange, value, sizeLimit },
@@ -10,6 +13,14 @@ const DropZone = forwardRef(function DropZoneFunction(
 ) {
   const [imageFile, setImageFile] = useState(null);
   const [error, setError] = useState("");
+  const [crop, setCrop] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [croppedImageUrl, setCroppedImageUrl] = useState("");
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    setImageFile(null);
+  };
 
   function onDragOver(e) {
     e.preventDefault();
@@ -36,6 +47,7 @@ const DropZone = forwardRef(function DropZoneFunction(
     if (file) {
       onChange(file);
       setImageFile(file);
+      setIsModalOpen(true);
     }
   }
 
@@ -49,18 +61,46 @@ const DropZone = forwardRef(function DropZoneFunction(
     }
   }
 
+  const saveCroppedImage = async () => {
+    const image = document.querySelector("img[alt='crop']");
+    if (!image || !crop) {
+      return;
+    }
+    const croppedImageUrl = await getCroppedImg(image, crop);
+
+    // create new image file after cropped
+    // upload the cropped file to server if needed
+    const newFIle = await createNewImageFile(croppedImageUrl);
+    console.log({ file: newFIle });
+    setCroppedImageUrl(croppedImageUrl);
+    setImageFile(null);
+  };
+
   return (
     <>
       {error && <p className="error">{error}</p>}
       <div ref={ref} className="dropzone" style={{ maxWidth: previewMaxWidth }}>
-        {imageFile && (
-          <ImageCropper
-            setImageFile={setImageFile}
-            setError={setError}
-            file={imageFile}
-          />
+        {imageFile && isModalOpen && (
+          <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
+            okText={"Crop Image"}
+            onOk={saveCroppedImage}
+          >
+            <ImageCropper
+              setImageFile={setImageFile}
+              setError={setError}
+              file={imageFile}
+              crop={crop}
+              setCrop={setCrop}
+              setCroppedImageUrl={setCroppedImageUrl}
+            />
+          </Modal>
         )}
-        {!imageFile && (
+
+        {croppedImageUrl && <img src={croppedImageUrl} alt="Cropped" />}
+
+        {!imageFile && !croppedImageUrl && (
           <div
             className="inner"
             onDrop={handleDrop}
