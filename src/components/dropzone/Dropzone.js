@@ -98,9 +98,7 @@ const DropZone = forwardRef(function DropZoneFunction(
           </Modal>
         )}
 
-        {croppedImageUrl && <img src={croppedImageUrl} alt="Cropped" />}
-
-        {!imageFile && !croppedImageUrl && (
+        {!imageFile && (
           <div
             className="inner"
             onDrop={handleDrop}
@@ -124,6 +122,18 @@ const DropZone = forwardRef(function DropZoneFunction(
             <p>
               <small>Drag a file inside or click the link to upload</small>
             </p>
+          </div>
+        )}
+
+        {croppedImageUrl && (
+          <div
+            style={{ border: "4px dashed gray" }}
+            className="p-2 flex justify-center items-center  mt-24"
+          >
+            <div>
+              <h4 className="text-lg font-semibold">Cropped image preview</h4>
+              <img className="mt-3" src={croppedImageUrl} alt="Cropped" />
+            </div>
           </div>
         )}
       </div>
