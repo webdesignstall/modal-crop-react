@@ -3,7 +3,7 @@ import ReactCrop, { centerCrop, makeAspectCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 
 const ASPECT_RATIO = 1;
-const MIN_DIMENSION = 100;
+const MIN_DIMENSION = 180;
 
 const ImageCropper = ({ file, setError, crop, setCrop }) => {
   const [imageSrc, setImageSrc] = useState("");
@@ -21,7 +21,9 @@ const ImageCropper = ({ file, setError, crop, setCrop }) => {
     const { width, height, naturalWidth, naturalHeight } = e.currentTarget;
 
     if (naturalWidth < MIN_DIMENSION || naturalHeight < MIN_DIMENSION) {
-      setError("Image must be at least 100 x 100 pixels");
+      setError(
+        `Image must be at least ${MIN_DIMENSION} x ${MIN_DIMENSION} pixels`
+      );
       setImageSrc("");
       return;
     }
