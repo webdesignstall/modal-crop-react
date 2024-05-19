@@ -58,6 +58,8 @@ const DropZone = forwardRef(function DropZoneFunction(
     const file = e.dataTransfer.files[0];
     if (file) {
       onChange(file);
+      setImageFile(file);
+      setIsModalOpen(true);
     }
   }
 
