@@ -6,6 +6,7 @@ import ImageCropper from "../crop";
 import { Modal } from "antd";
 import { getCroppedImg } from "../../utils/cropImage";
 import { createNewImageFile } from "../../utils/createNewImage";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 const DropZone = forwardRef(function DropZoneFunction(
   { previewMaxWidth, onChange, value, sizeLimit },
@@ -78,6 +79,11 @@ const DropZone = forwardRef(function DropZoneFunction(
     setImageFile(null);
   };
 
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setCroppedImageUrl("");
+  };
+
   return (
     <>
       {error && <p className="error">{error}</p>}
@@ -100,7 +106,7 @@ const DropZone = forwardRef(function DropZoneFunction(
           </Modal>
         )}
 
-        {!imageFile && (
+        {!imageFile && !croppedImageUrl ? (
           <div
             className="inner"
             onDrop={handleDrop}
@@ -125,16 +131,20 @@ const DropZone = forwardRef(function DropZoneFunction(
               <small>Drag a file inside or click the link to upload</small>
             </p>
           </div>
-        )}
-
-        {croppedImageUrl && (
-          <div
-            style={{ border: "4px dashed gray" }}
-            className="p-2 flex justify-center items-center  mt-24"
-          >
-            <div>
-              <h4 className="text-lg font-semibold">Cropped image preview</h4>
-              <img className="mt-3" src={croppedImageUrl} alt="Cropped" />
+        ) : (
+          <div className="relative group mt-3 w-full h-full">
+            <img
+              src={croppedImageUrl}
+              alt="Cropped"
+              className="w-full h-full object-cover rounded-md"
+            />
+            <div className="absolute top-0 left-0 w-full rounded-md h-full flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <button
+                onClick={handleRemoveImage}
+                className="bg-white text-black p-2 rounded-full"
+              >
+                <RiDeleteBin6Line size={24} />
+              </button>
             </div>
           </div>
         )}
